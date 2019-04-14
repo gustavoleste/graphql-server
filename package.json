@@ -1,0 +1,20 @@
+{
+  "name": "apollo-server-test-01",
+  "version": "1.0.0",
+  "description": "apollo server tutorial",
+  "main": "index.js",
+  "author": "Gustavo Leste",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "apollo-server": "^2.4.8",
+    "graphql": "^14.2.1",
+    "mongoose": "^5.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}
