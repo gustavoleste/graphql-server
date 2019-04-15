@@ -51,13 +51,7 @@ const stylesSchema = mongoose.Schema({
 const Styles = mongoose.model('Styles', stylesSchema);
 
 const typeDefs = gql`
-  type Categories {
-    id: ID
-    name: String
-    description: String
-    styles:[Styles]
-  }
-
+  
   type statsField {
     ibu: statsFields!
     og: statsFields!
@@ -71,7 +65,7 @@ const typeDefs = gql`
     high: String!
   }
 
-  type Styles {
+  type Style {
     id: ID!
     name: String!
     aroma: String
@@ -85,13 +79,20 @@ const typeDefs = gql`
     comparison: String!
     examples:[String]!
     tags: [String]!
-    stats: statsField!  
-    category:Categories!
+    stats: statsField!
+  }
+
+  type Category {
+    id: ID!
+    name: String
+    description: String
+    styles:[Style]
   }
 
   type Query {
-    categories: [Categories]
-    styles:[Styles]
+    categories: [Category]
+    category(id: ID!):Category
+    style(id: ID!): Style
   }
   
 `;
@@ -102,8 +103,12 @@ const resolvers = {
       const res = await Categories.find().populate('styles');
       return res;
     },
-    styles: async () =>{
-      const res = await Styles.find();           
+    style: async (_,args) =>{
+      const res = await Styles.findOne({_id: args.id});           
+      return res;
+    },
+    category: async (_,args) => {
+      const res = await Categories.findOne({_id: args.id}).populate('styles');
       return res;
     }
   }  
@@ -111,7 +116,10 @@ const resolvers = {
 
 const runServer = async () => {
   const server = new ApolloServer({ typeDefs, resolvers });
-  const res = await server.listen({ port: process.env.PORT || 4000 });
+  const res = await server.listen({ port: process.env.PORT || 4000, cors: {
+    origin: true,
+    credentials: true,
+  }});
   console.log(`Server ready at ${res.url}`);
 };
 
